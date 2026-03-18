@@ -1,413 +1,636 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Influent Summit 2026 — O Maior Evento de Creator Economy da América Latina</title>
-<meta name="description" content="Influent Summit 2026: 24 e 25 de junho no Expo Center Norte, São Paulo. O maior evento de Creator Economy e Marketing de Influência da América Latina. Garanta seu ingresso.">
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%237C3AED'/%3E%3Ctext x='50%25' y='44' text-anchor='middle' font-family='Arial Black' font-weight='900' font-size='22' fill='%23fff'%3EIS%3C/text%3E%3C/svg%3E">
-<style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --v:#7C3AED;--v2:#A855F7;--v3:#C084FC;
-  --c:#06B6D4;--c2:#22D3EE;
-  --dark:#06040F;--darker:#030208;--card:#0D0A1A;--card2:#110E1F;
-  --border:rgba(124,58,237,0.2);--text:#F0ECF8;--muted:#7B7394;
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { ChevronDown, Check, Star, Shield, Leaf, Zap } from "lucide-react";
+import { useState } from "react";
+
+/**
+ * Design Philosophy: Premium Scientific Wellness
+ * - Teal Blue (#0D9488) for trust and science
+ * - Warm Orange (#F97316) for energy and transformation
+ * - Minimalist layout with generous whitespace
+ * - Smooth animations and micro-interactions
+ */
+
+const AFFILIATE_LINK = "https://0294ccgkq4xc5tfevq15cf3r41.hop.clickbank.net";
+const PRODUCT_IMAGE = "https://d2xsxph8kpxj0f.cloudfront.net/310519663314011516/ihACBaYjMFvWjzXHQJd6P2/mitolyn-product_c98f070f.jpeg";
+
+const INGREDIENTS = [
+  {
+    name: "Maqui Berry",
+    description: "Fruta roxa exótica repleta de antioxidante antocianina",
+    benefits: ["Promove mitocôndrias", "Apoia coração saudável", "Apoia colesterol saudável"],
+    color: "from-purple-500 to-purple-600"
+  },
+  {
+    name: "Rhodiola",
+    description: "Adaptógeno com mais de 140 polifenóis",
+    benefits: ["Promove mitocôndrias", "Reduz estresse e melhora o humor", "Apoia saúde cerebral"],
+    color: "from-pink-500 to-pink-600"
+  },
+  {
+    name: "Haematococcus",
+    description: "Alga vermelha rica em antioxidante astaxantina",
+    benefits: ["Promove mitocôndrias", "Apoia articulações saudáveis", "Apoia resposta imunológica"],
+    color: "from-red-500 to-red-600"
+  },
+  {
+    name: "Amla",
+    description: "Fruta especial rica em flavonoides e antioxidantes",
+    benefits: ["Promove mitocôndrias", "Apoia digestão saudável", "Apoia visão"],
+    color: "from-yellow-500 to-yellow-600"
+  },
+  {
+    name: "Theobroma Cacao",
+    description: "Superfood tropical com flavonoides epicatequina",
+    benefits: ["Promove mitocôndrias", "Apoia pressão arterial saudável", "Afrodisíaco natural"],
+    color: "from-amber-700 to-amber-800"
+  },
+  {
+    name: "Schisandra",
+    description: "Poderosas bagas vermelhas que queimam calorias",
+    benefits: ["Promove mitocôndrias", "Apoia saúde hepática", "Mantém elasticidade da pele"],
+    color: "from-red-600 to-red-700"
+  }
+];
+
+const PRICING_PLANS = [
+  {
+    name: "BÁSICO",
+    bottles: "1 FRASCO",
+    supply: "Suprimento de 30 Dias",
+    price: 79,
+    popular: false,
+    bonuses: 0,
+    shipping: "Frete Padrão"
+  },
+  {
+    name: "MAIS POPULAR",
+    bottles: "6 FRASCOS",
+    supply: "Suprimento de 180 Dias",
+    price: 294,
+    popular: true,
+    bonuses: 2,
+    shipping: "FRETE GRÁTIS"
+  },
+  {
+    name: "PACOTE",
+    bottles: "3 FRASCOS",
+    supply: "Suprimento de 90 Dias",
+    price: 177,
+    popular: false,
+    bonuses: 2,
+    shipping: "Frete Padrão"
+  }
+];
+
+const TESTIMONIALS = [
+  {
+    name: "Peggy B.",
+    location: "Rexton, MI",
+    weight: "35 kg",
+    text: "Sempre me senti envergonhada com minha aparência, especialmente em situações sociais. Desde que comecei a usar Mitolyn, perdi 35 quilos, e pela primeira vez em anos, realmente gosto de me olhar no espelho. É incrível como essa mudança aumentou minha confiança!",
+    package: "Pacote 6 Frascos",
+    rating: 5
+  },
+  {
+    name: "Russell L.",
+    location: "Macon, GA",
+    weight: "29 kg",
+    text: "Não importava o que eu tentasse, meu peso simplesmente não diminuía, especialmente na barriga. Mitolyn acelerou meu metabolismo e finalmente me ajudou a perder 29 quilos teimosos. Me sinto mais leve e energético, e minhas roupas estão caindo muito melhor.",
+    package: "Pacote 3 Frascos",
+    rating: 5
+  },
+  {
+    name: "Connie A.",
+    location: "Montclair, NJ",
+    weight: "40 kg",
+    text: "Ser acima do peso tornava até atividades básicas exaustivas. Mal conseguia brincar com meus filhos sem ficar ofegante. Depois de usar Mitolyn, perdi 40 quilos, e agora consigo acompanhar meus filhos sem me cansar. Tenho minha energia e liberdade de volta!",
+    package: "Pacote 6 Frascos",
+    rating: 5
+  }
+];
+
+const FAQ_ITEMS = [
+  {
+    question: "Mitolyn é certo para mim?",
+    answer: "Mitolyn foi desenvolvido para qualquer pessoa que deseje apoiar seu metabolismo e níveis de energia naturalmente. Funciona melhor como parte de um estilo de vida saudável com dieta adequada e exercício. Se você tem condições médicas ou toma medicamentos, consulte seu médico antes de usar."
+  },
+  {
+    question: "Mitolyn é seguro?",
+    answer: "Sim, Mitolyn é feito com ingredientes naturais não-OGM e fabricado nos EUA. Não contém estimulantes e não causa dependência. No entanto, se você está grávida, amamentando ou tem condições médicas, consulte seu médico antes de usar."
+  },
+  {
+    question: "Quantos frascos devo pedir?",
+    answer: "A maioria dos clientes (96%) pede o pacote de 6 frascos para melhores resultados. Isso oferece um suprimento de 180 dias para experimentar os benefícios completos. O pacote de 3 frascos também é popular para um teste de 90 dias."
+  },
+  {
+    question: "Qual é a melhor forma de tomar Mitolyn?",
+    answer: "Tome uma cápsula diariamente com água. Para melhores resultados, tome consistentemente e combine com uma dieta saudável e exercício regular. Os resultados geralmente aparecem em 30-60 dias."
+  },
+  {
+    question: "É um pagamento único?",
+    answer: "Sim, é um pagamento único. Não há cobranças recorrentes ou assinaturas. Você paga uma vez e recebe seu pedido."
+  },
+  {
+    question: "E se Mitolyn não funcionar para mim?",
+    answer: "Oferecemos uma garantia de devolução do dinheiro de 100% em 90 dias. Se você não estiver completamente satisfeito, simplesmente nos contacte dentro de 90 dias para um reembolso completo, sem perguntas."
+  }
+];
+
+function FAQItem({ question, answer, isOpen, onToggle }: { question: string; answer: string; isOpen: boolean; onToggle: () => void }) {
+  return (
+    <div className="border-b border-border last:border-b-0">
+      <button
+        onClick={onToggle}
+        className="w-full py-4 px-6 flex items-center justify-between hover:bg-secondary/50 transition-colors"
+      >
+        <h3 className="text-left font-semibold text-foreground">{question}</h3>
+        <ChevronDown
+          className={`w-5 h-5 text-primary transition-transform duration-300 ${
+            isOpen ? "rotate-180" : ""
+          }`}
+        />
+      </button>
+      {isOpen && (
+        <div className="px-6 pb-4 text-foreground/80 animate-in fade-in slide-in-from-top-2">
+          {answer}
+        </div>
+      )}
+    </div>
+  );
 }
-html{scroll-behavior:smooth}
-body{font-family:'Inter',sans-serif;background:var(--dark);color:var(--text);overflow-x:hidden}
 
-.topbar{background:linear-gradient(90deg,var(--v),var(--v2),var(--c));text-align:center;padding:11px 16px;font-family:'Syne',sans-serif;font-weight:700;font-size:0.82rem;color:#fff;letter-spacing:0.05em}
+export default function Home() {
+  const [openFAQ, setOpenFAQ] = useState<number | null>(0);
 
-nav{position:sticky;top:0;z-index:200;background:rgba(6,4,15,0.97);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 32px;height:64px;display:flex;align-items:center;justify-content:space-between}
-.logo{display:flex;align-items:center;gap:12px}
-.logo-badge{background:linear-gradient(135deg,var(--v),var(--c));color:#fff;font-family:'Syne',sans-serif;font-weight:800;font-size:0.82rem;padding:6px 13px;border-radius:6px;letter-spacing:0.04em}
-.logo-text{font-family:'Syne',sans-serif;font-weight:800;font-size:1rem;color:#fff;line-height:1.2}
-.logo-text span{color:var(--v3);display:block;font-size:0.6rem;letter-spacing:0.14em;font-weight:600;text-transform:uppercase;margin-top:2px}
-.nav-btn{background:linear-gradient(135deg,var(--v),var(--v2));color:#fff;font-family:'Syne',sans-serif;font-weight:700;font-size:0.78rem;letter-spacing:0.05em;text-transform:uppercase;padding:10px 22px;border-radius:6px;text-decoration:none;transition:all 0.2s;white-space:nowrap;box-shadow:0 2px 16px rgba(124,58,237,0.4)}
-.nav-btn:hover{opacity:0.9;transform:translateY(-1px)}
+  return (
+    <div className="min-h-screen bg-white">
+      {/* Navigation */}
+      <nav className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-border shadow-sm">
+        <div className="container flex items-center justify-between h-16">
+          <div className="text-2xl font-display text-primary">
+            MITOLYN
+          </div>
+          <div className="hidden md:flex items-center gap-8">
+            <a href="#ingredients" className="text-sm font-medium hover:text-primary transition-colors">
+              Ingredientes
+            </a>
+            <a href="#benefits" className="text-sm font-medium hover:text-primary transition-colors">
+              Benefícios
+            </a>
+            <a href="#testimonials" className="text-sm font-medium hover:text-primary transition-colors">
+              Depoimentos
+            </a>
+            <a href="#faq" className="text-sm font-medium hover:text-primary transition-colors">
+              FAQ
+            </a>
+          </div>
+          <Button
+            asChild
+            className="bg-accent hover:bg-accent/90 text-white font-semibold"
+          >
+            <a href={AFFILIATE_LINK} target="_blank" rel="noopener noreferrer">
+              Comprar Agora
+            </a>
+          </Button>
+        </div>
+      </nav>
 
-.hero{background:var(--darker);padding:80px 24px 72px;text-align:center;position:relative;overflow:hidden}
-.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(124,58,237,0.05) 1px,transparent 1px),linear-gradient(90deg,rgba(124,58,237,0.05) 1px,transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 70% at 50% 0%,black 30%,transparent 80%);pointer-events:none}
-.hero-glow{position:absolute;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(124,58,237,0.15) 0%,transparent 70%);top:-200px;left:50%;transform:translateX(-50%);pointer-events:none}
-.hero-line{position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,var(--v),var(--c),transparent)}
-.date-badge{display:inline-flex;align-items:center;gap:10px;background:rgba(124,58,237,0.1);border:1px solid rgba(124,58,237,0.3);color:var(--v3);font-family:'Syne',sans-serif;font-size:0.8rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;padding:8px 20px;border-radius:100px;margin-bottom:28px;position:relative}
-.date-badge::before{content:'';width:8px;height:8px;border-radius:50%;background:var(--c);flex-shrink:0;animation:pulse 2s infinite}
-@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(1.3)}}
-.hero h1{font-family:'Syne',sans-serif;font-weight:800;font-size:clamp(2rem,6vw,4rem);line-height:1.05;letter-spacing:-0.02em;color:#fff;max-width:900px;margin:0 auto 20px;text-transform:uppercase;position:relative}
-.hero h1 .acc{background:linear-gradient(90deg,var(--v3),var(--c2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.hero-sub{font-size:clamp(0.95rem,2vw,1.1rem);color:var(--muted);max-width:620px;margin:0 auto 14px;line-height:1.85;position:relative}
-.hero-sub strong{color:#ddd}
-.hero-info{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin-bottom:38px;position:relative}
-.hi-pill{display:flex;align-items:center;gap:8px;background:rgba(13,10,26,0.8);border:1px solid var(--border);padding:10px 18px;border-radius:8px;font-size:0.85rem;color:#ccc}
-.hi-pill strong{color:#fff;font-weight:600}
-.btn-main{display:inline-block;background:linear-gradient(135deg,var(--v),var(--v2));color:#fff;font-family:'Syne',sans-serif;font-weight:800;font-size:1.05rem;letter-spacing:0.05em;text-transform:uppercase;padding:20px 56px;border-radius:8px;text-decoration:none;transition:all 0.25s;box-shadow:0 6px 36px rgba(124,58,237,0.5);position:relative}
-.btn-main:hover{opacity:0.92;transform:translateY(-3px);box-shadow:0 14px 48px rgba(124,58,237,0.65)}
-.hero-trust{margin-top:16px;display:flex;flex-wrap:wrap;justify-content:center;gap:20px;font-size:0.77rem;color:#2a2040;position:relative}
+      {/* Hero Section */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-primary/5 via-white to-accent/5 py-20 md:py-32">
+        <div className="container grid md:grid-cols-2 gap-12 items-center">
+          <div className="space-y-8">
+            <div className="space-y-4">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-display leading-tight">
+                Desbloqueie Seu <span className="gradient-text">Poder Metabólico</span>
+              </h1>
+              <p className="text-xl text-foreground/70 leading-relaxed">
+                Queime Mais Calorias e Se Sinta Ótimo Com a mistura proprietária do Mitolyn de 6 ingredientes raros desenvolvidos para apoiar níveis saudáveis de mitocôndrias.
+              </p>
+            </div>
 
-.stats{background:var(--card);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:0 24px;display:flex;justify-content:center;flex-wrap:wrap}
-.stat{text-align:center;padding:24px 48px;border-right:1px solid var(--border)}
-.stat:last-child{border-right:none}
-.stat strong{display:block;font-family:'Syne',sans-serif;font-size:2.5rem;font-weight:800;line-height:1;margin-bottom:4px}
-.stat strong.v{background:linear-gradient(90deg,var(--v2),var(--v3));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.stat strong.c{background:linear-gradient(90deg,var(--c),var(--c2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.stat p{font-size:0.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;font-weight:500}
+            <div className="flex flex-col sm:flex-row gap-4">
+              <Button
+                asChild
+                size="lg"
+                className="bg-primary hover:bg-primary/90 text-white font-semibold text-base"
+              >
+                <a href={AFFILIATE_LINK} target="_blank" rel="noopener noreferrer">
+                  Comece Agora
+                </a>
+              </Button>
+              <Button
+                asChild
+                variant="outline"
+                size="lg"
+                className="font-semibold text-base"
+              >
+                <a href="#ingredients">Saiba Mais</a>
+              </Button>
+            </div>
 
-section{padding:88px 24px}
-.container{max-width:1060px;margin:0 auto}
-.sec-label{font-size:0.72rem;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--v3);margin-bottom:12px;display:block}
-.sec-title{font-family:'Syne',sans-serif;font-size:clamp(1.8rem,4.5vw,3rem);font-weight:800;line-height:1.05;letter-spacing:-0.02em;color:#fff;margin-bottom:16px;text-transform:uppercase}
-.sec-title .a{background:linear-gradient(90deg,var(--v3),var(--c2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.sec-sub{font-size:0.97rem;color:var(--muted);line-height:1.85;max-width:560px;margin-bottom:52px}
+            <div className="flex items-center gap-4 pt-4">
+              <div className="flex gap-1">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} className="w-5 h-5 fill-yellow-400 text-yellow-400" />
+                ))}
+              </div>
+              <p className="text-sm text-foreground/70">
+                <span className="font-semibold text-foreground">5/5</span> - Avaliações de Clientes Verificados
+              </p>
+            </div>
+          </div>
 
-/* SOBRE */
-.sobre{background:var(--darker)}
-.sobre-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
-@media(max-width:768px){.sobre-grid{grid-template-columns:1fr}}
-.sobre-text p{font-size:0.95rem;color:#6B6380;line-height:1.9;margin-bottom:16px}
-.sobre-text p strong{color:#ccc}
-.sobre-stats{display:flex;flex-direction:column;gap:12px}
-.ss{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px 24px;display:flex;align-items:center;gap:16px;transition:all 0.2s}
-.ss:hover{border-color:rgba(124,58,237,0.4);transform:translateX(4px)}
-.ss-num{font-family:'Syne',sans-serif;font-weight:800;font-size:2rem;background:linear-gradient(90deg,var(--v2),var(--c));-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1;flex-shrink:0;min-width:80px}
-.ss-label{font-size:0.85rem;color:var(--muted);line-height:1.5}
-.ss-label strong{color:#ddd;display:block;font-size:0.9rem;margin-bottom:2px}
+          <div className="relative h-96 md:h-full min-h-96 rounded-2xl overflow-hidden shadow-premium flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
+            <img
+              src={PRODUCT_IMAGE}
+              alt="Frasco Mitolyn"
+              className="w-full h-full object-contain p-4"
+            />
+          </div>
+        </div>
+      </section>
 
-/* PALCOS */
-.palcos{background:var(--dark)}
-.palcos-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
-.palco{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:28px 24px;transition:all 0.2s;position:relative;overflow:hidden}
-.palco::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--v),var(--c));transform:scaleX(0);transform-origin:left;transition:transform 0.35s}
-.palco:hover{transform:translateY(-4px);border-color:rgba(124,58,237,0.35)}
-.palco:hover::before{transform:scaleX(1)}
-.palco-icon{font-size:2.2rem;margin-bottom:14px}
-.palco h3{font-family:'Syne',sans-serif;font-weight:800;font-size:0.95rem;color:#fff;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.03em}
-.palco p{font-size:0.84rem;color:#3a3050;line-height:1.7}
+      {/* Science Section */}
+      <section className="py-20 md:py-32 bg-gradient-to-r from-primary/10 to-accent/10">
+        <div className="container space-y-12">
+          <div className="text-center space-y-4 max-w-3xl mx-auto">
+            <h2 className="text-3xl md:text-4xl font-display">
+              Cientistas de Harvard Descobrem a Verdadeira Causa do Metabolismo Lento
+            </h2>
+            <p className="text-lg text-foreground/70">
+              Pesquisa de ponta revela que níveis baixos de mitocôndrias são o fator comum em toda pessoa acima do peso. A solução? Aumente sua função mitocondrial naturalmente.
+            </p>
+          </div>
 
-/* TÓPICOS */
-.topicos{background:var(--darker)}
-.topics-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:10px}
-.topic{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px 20px;display:flex;align-items:flex-start;gap:12px;transition:all 0.15s}
-.topic:hover{border-color:rgba(124,58,237,0.3)}
-.topic .dot{width:6px;height:6px;border-radius:50%;background:linear-gradient(135deg,var(--v2),var(--c));flex-shrink:0;margin-top:6px}
-.topic p{font-size:0.85rem;color:#5a5070;line-height:1.6}
+          <div className="grid md:grid-cols-3 gap-8">
+            <Card className="p-8 border-0 shadow-premium hover:shadow-hover transition-all">
+              <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+                <Zap className="w-6 h-6 text-primary" />
+              </div>
+              <h3 className="font-heading text-lg mb-2">Mitocôndrias = Energia</h3>
+              <p className="text-foreground/70">
+                Mitocôndrias são pequenas "usinas de energia" em cada célula que queimam gordura e criam energia ATP para seu corpo.
+              </p>
+            </Card>
 
-/* QUEM PARTICIPA */
-.quem{background:var(--dark)}
-.quem-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
-.qc{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px 20px;text-align:center;transition:all 0.2s}
-.qc:hover{transform:translateY(-3px);border-color:rgba(124,58,237,0.3)}
-.qc-icon{font-size:2.2rem;margin-bottom:12px}
-.qc h3{font-family:'Syne',sans-serif;font-weight:800;font-size:0.88rem;color:#fff;margin-bottom:6px;text-transform:uppercase}
-.qc p{font-size:0.8rem;color:#3a3050;line-height:1.65}
+            <Card className="p-8 border-0 shadow-premium hover:shadow-hover transition-all">
+              <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center mb-4">
+                <Leaf className="w-6 h-6 text-accent" />
+              </div>
+              <h3 className="font-heading text-lg mb-2">Mais Mitocôndrias = Mais Queima de Gordura</h3>
+              <p className="text-foreground/70">
+                Níveis mitocondriais mais altos significam que seu corpo queima mais calorias naturalmente, até em repouso.
+              </p>
+            </Card>
 
-/* INGRESSOS */
-.ingressos{background:var(--darker);text-align:center}
-.ing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;max-width:1000px;margin:0 auto}
-.ing{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:32px 26px;position:relative;overflow:hidden;text-align:left;transition:all 0.2s}
-.ing:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(124,58,237,0.15)}
-.ing.popular{border:2px solid var(--v);box-shadow:0 0 40px rgba(124,58,237,0.15)}
-.ing.popular::after{content:'MAIS VENDIDO';position:absolute;top:14px;right:14px;background:linear-gradient(135deg,var(--v),var(--c));color:#fff;font-size:0.6rem;font-weight:800;letter-spacing:0.1em;padding:4px 10px;border-radius:100px}
-.ing::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--v),var(--c))}
-.ing-tipo{font-size:0.7rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--v3);margin-bottom:8px}
-.ing-nome{font-family:'Syne',sans-serif;font-weight:800;font-size:1.1rem;color:#fff;margin-bottom:6px;text-transform:uppercase}
-.ing-desc{font-size:0.8rem;color:var(--muted);margin-bottom:20px;line-height:1.6}
-.ing-price{font-family:'Syne',sans-serif;font-weight:800;font-size:2.4rem;color:#fff;line-height:1;letter-spacing:-0.02em;margin-bottom:4px}
-.ing-price .cur{font-size:1.2rem;background:linear-gradient(90deg,var(--v3),var(--c2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;vertical-align:super}
-.ing-recur{font-size:0.76rem;color:var(--muted);margin-bottom:22px}
-.ing-features{display:flex;flex-direction:column;gap:8px;margin-bottom:24px}
-.if{display:flex;align-items:flex-start;gap:8px;font-size:0.82rem;color:#5a5070;line-height:1.5}
-.if .c{color:var(--v3);flex-shrink:0;margin-top:1px}
-.ing-btn{display:block;width:100%;background:linear-gradient(135deg,var(--v),var(--v2));color:#fff;font-family:'Syne',sans-serif;font-weight:800;font-size:0.88rem;letter-spacing:0.06em;text-transform:uppercase;padding:14px;border-radius:8px;text-decoration:none;text-align:center;transition:all 0.2s;box-shadow:0 4px 20px rgba(124,58,237,0.35)}
-.ing-btn:hover{opacity:0.9;transform:translateY(-2px);box-shadow:0 8px 32px rgba(124,58,237,0.5)}
-.ing-btn.outline{background:transparent;border:1px solid var(--border);color:var(--v3);box-shadow:none}
-.ing-btn.outline:hover{background:rgba(124,58,237,0.08);border-color:rgba(124,58,237,0.4)}
+            <Card className="p-8 border-0 shadow-premium hover:shadow-hover transition-all">
+              <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+                <Shield className="w-6 h-6 text-primary" />
+              </div>
+              <h3 className="font-heading text-lg mb-2">Mitolyn as Ativa</h3>
+              <p className="text-foreground/70">
+                Nossa fórmula proprietária apoia a função mitocondrial saudável com 6 ingredientes respaldados cientificamente.
+              </p>
+            </Card>
+          </div>
+        </div>
+      </section>
 
-/* LOCAL */
-.local{background:var(--dark)}
-.local-box{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:48px;display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;max-width:900px;margin:0 auto}
-@media(max-width:640px){.local-box{grid-template-columns:1fr;padding:32px 24px}}
-.local-map{background:var(--card2);border:1px solid var(--border);border-radius:12px;height:220px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px}
-.local-map .map-icon{font-size:3rem}
-.local-map p{font-size:0.85rem;color:var(--muted);text-align:center;line-height:1.6}
-.local-info h3{font-family:'Syne',sans-serif;font-weight:800;font-size:1.3rem;color:#fff;margin-bottom:16px;text-transform:uppercase}
-.local-detail{display:flex;gap:12px;align-items:flex-start;margin-bottom:14px}
-.ld-icon{font-size:1.4rem;flex-shrink:0}
-.ld-text strong{display:block;font-size:0.85rem;color:#ddd;margin-bottom:2px}
-.ld-text p{font-size:0.82rem;color:var(--muted);line-height:1.55}
+      {/* Ingredients Section */}
+      <section id="ingredients" className="py-20 md:py-32">
+        <div className="container space-y-16">
+          <div className="text-center space-y-4 max-w-3xl mx-auto">
+            <h2 className="text-3xl md:text-4xl font-display">
+              6 Ingredientes Raros que Apoiam Mitocôndrias Saudáveis
+            </h2>
+            <p className="text-lg text-foreground/70">
+              Cada ingrediente é cientificamente selecionado para promover a função mitocondrial e apoiar seus objetivos de bem-estar.
+            </p>
+          </div>
 
-/* FAQ */
-.faq{background:var(--darker)}
-.faq-list{max-width:780px;margin:0 auto;display:flex;flex-direction:column;gap:8px}
-.faq-item{background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden}
-.faq-q{width:100%;background:none;border:none;padding:20px 24px;text-align:left;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:16px;transition:background 0.15s}
-.faq-q:hover{background:rgba(124,58,237,0.05)}
-.faq-q span{font-family:'Syne',sans-serif;font-weight:700;font-size:0.9rem;color:#E0D8F0;flex:1;text-transform:uppercase;letter-spacing:0.02em}
-.faq-arrow{color:var(--v3);font-size:1.2rem;flex-shrink:0;transition:transform 0.3s}
-.faq-item.open .faq-arrow{transform:rotate(45deg)}
-.faq-a{max-height:0;overflow:hidden;transition:max-height 0.35s ease}
-.faq-a p{padding:0 24px 20px;font-size:0.88rem;color:#3a3050;line-height:1.85}
-.faq-item.open .faq-a{max-height:300px}
+          <div className="relative h-96 md:h-96 rounded-2xl overflow-hidden shadow-premium mb-12">
+            <img
+              src="https://d2xsxph8kpxj0f.cloudfront.net/310519663314011516/ihACBaYjMFvWjzXHQJd6P2/mitolyn-ingredients-bg-NoqCqGwMY4nYtTJSSqgkx2.webp"
+              alt="Ingredientes Naturais"
+              className="w-full h-full object-cover"
+            />
+          </div>
 
-/* FINAL */
-.final{background:var(--dark);text-align:center;padding:100px 24px;position:relative;overflow:hidden}
-.final::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 60% at 50% 100%,rgba(124,58,237,0.1) 0%,transparent 70%);pointer-events:none}
-.final h2{font-family:'Syne',sans-serif;font-weight:800;font-size:clamp(2rem,5.5vw,3.5rem);color:#fff;text-transform:uppercase;line-height:1.05;margin-bottom:18px;position:relative;letter-spacing:-0.02em}
-.final h2 .a{background:linear-gradient(90deg,var(--v3),var(--c2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.final p{font-size:0.97rem;color:#2a2040;max-width:480px;margin:0 auto 40px;line-height:1.85;position:relative}
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {INGREDIENTS.map((ingredient, idx) => (
+              <Card key={idx} className="p-8 border-0 shadow-premium hover:shadow-hover transition-all group">
+                <div className={`w-12 h-12 rounded-full bg-gradient-to-br ${ingredient.color} mb-4 group-hover:scale-110 transition-transform`} />
+                <h3 className="font-heading text-lg mb-2">{ingredient.name}</h3>
+                <p className="text-sm text-foreground/70 mb-4">{ingredient.description}</p>
+                <ul className="space-y-2">
+                  {ingredient.benefits.map((benefit, i) => (
+                    <li key={i} className="flex items-start gap-2 text-sm">
+                      <Check className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                      <span className="text-foreground/80">{benefit}</span>
+                    </li>
+                  ))}
+                </ul>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
 
-.sticky{position:fixed;bottom:0;left:0;right:0;background:rgba(6,4,15,0.98);backdrop-filter:blur(16px);border-top:1px solid var(--border);padding:12px 24px;display:flex;align-items:center;justify-content:center;gap:20px;z-index:999;transform:translateY(100%);transition:transform 0.4s ease;flex-wrap:wrap}
-.sticky.show{transform:translateY(0)}
-.sticky p{font-size:0.83rem;color:#2a2040}
-.sticky p strong{color:#ccc}
-.sticky-btn{background:linear-gradient(135deg,var(--v),var(--v2));color:#fff;font-family:'Syne',sans-serif;font-weight:700;font-size:0.85rem;letter-spacing:0.06em;text-transform:uppercase;padding:12px 28px;border-radius:6px;text-decoration:none;white-space:nowrap;transition:all 0.2s;box-shadow:0 2px 16px rgba(124,58,237,0.4)}
-.sticky-btn:hover{opacity:0.9}
+      {/* Benefits Section */}
+      <section id="benefits" className="py-20 md:py-32 bg-gradient-to-r from-primary/5 to-accent/5">
+        <div className="container space-y-12">
+          <div className="text-center space-y-4 max-w-3xl mx-auto">
+            <h2 className="text-3xl md:text-4xl font-display">
+              Por Que Escolher Mitolyn?
+            </h2>
+            <p className="text-lg text-foreground/70">
+              Nossa fórmula é respaldada por ciência e desenvolvida para resultados reais.
+            </p>
+          </div>
 
-footer{background:#030208;border-top:1px solid var(--border);padding:36px 24px 80px;text-align:center}
-footer p{font-size:0.72rem;color:#1a1530;line-height:2.2}
+          <div className="grid md:grid-cols-2 gap-8">
+            {[
+              { icon: Leaf, title: "Fórmula 100% Natural", desc: "Ingredientes à base de plantas sem aditivos sintéticos" },
+              { icon: Shield, title: "Não-OGM e Seguro", desc: "Sem estimulantes, não causa dependência, fabricado nos EUA" },
+              { icon: Zap, title: "Respaldado Cientificamente", desc: "Cada ingrediente apoiado por pesquisa revisada por pares" },
+              { icon: Check, title: "Fácil de Usar", desc: "Apenas uma cápsula diária - simples e conveniente" },
+            ].map((item, idx) => (
+              <div key={idx} className="flex gap-4">
+                <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                  <item.icon className="w-6 h-6 text-primary" />
+                </div>
+                <div>
+                  <h3 className="font-heading text-lg mb-1">{item.title}</h3>
+                  <p className="text-foreground/70">{item.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-.r{opacity:0;transform:translateY(22px);transition:opacity 0.55s ease,transform 0.55s ease}
-.r.on{opacity:1;transform:none}
+      {/* Testimonials Section */}
+      <section id="testimonials" className="py-20 md:py-32">
+        <div className="container space-y-16">
+          <div className="text-center space-y-4 max-w-3xl mx-auto">
+            <h2 className="text-3xl md:text-4xl font-display">
+              Resultados Reais de Pessoas Reais
+            </h2>
+            <p className="text-lg text-foreground/70">
+              Veja como Mitolyn transformou vidas e aumentou a confiança.
+            </p>
+          </div>
 
-@media(max-width:640px){
-  .stat{padding:18px 24px;border-right:none;border-bottom:1px solid var(--border)}
-  .stat:last-child{border-bottom:none}
-  nav{padding:0 16px}
-  .btn-main{padding:18px 28px;font-size:0.95rem}
-  .sobre-grid{grid-template-columns:1fr}
+          <div className="relative h-96 md:h-96 rounded-2xl overflow-hidden shadow-premium mb-12">
+            <img
+              src="https://d2xsxph8kpxj0f.cloudfront.net/310519663314011516/ihACBaYjMFvWjzXHQJd6P2/mitolyn-testimonials-bg-KYPHqw5vc6b56RZxVBZWEY.webp"
+              alt="Sucesso do Cliente"
+              className="w-full h-full object-cover"
+            />
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            {TESTIMONIALS.map((testimonial, idx) => (
+              <Card key={idx} className="p-8 border-0 shadow-premium hover:shadow-hover transition-all">
+                <div className="flex gap-1 mb-4">
+                  {[...Array(testimonial.rating)].map((_, i) => (
+                    <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                  ))}
+                </div>
+                <p className="text-foreground/80 mb-6 italic">"{testimonial.text}"</p>
+                <div className="space-y-2">
+                  <div>
+                    <p className="font-semibold text-primary">{testimonial.name}</p>
+                    <p className="text-sm text-foreground/60">{testimonial.location}</p>
+                  </div>
+                  <p className="text-sm font-semibold text-accent">Perdeu {testimonial.weight}</p>
+                  <p className="text-xs text-foreground/50">Comprou {testimonial.package}</p>
+                </div>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Pricing Section */}
+      <section className="py-20 md:py-32 bg-gradient-to-r from-primary/10 to-accent/10">
+        <div className="container space-y-12">
+          <div className="text-center space-y-4 max-w-3xl mx-auto">
+            <h2 className="text-3xl md:text-4xl font-display">
+              Reclame Seu Mitolyn com Desconto Abaixo para Enormes Economias
+            </h2>
+            <p className="text-lg text-foreground/70">
+              Escolha o plano que funciona melhor para você. 96% dos clientes escolhem o pacote de 6 frascos.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            {PRICING_PLANS.map((plan, idx) => (
+              <Card
+                key={idx}
+                className={`relative border-0 shadow-premium hover:shadow-hover transition-all overflow-hidden ${
+                  plan.popular ? "ring-2 ring-accent md:scale-105" : ""
+                }`}
+              >
+                {plan.popular && (
+                  <div className="absolute top-0 right-0 bg-accent text-white px-4 py-1 text-sm font-semibold rounded-bl-lg">
+                    MELHOR VALOR
+                  </div>
+                )}
+                <div className="p-8 space-y-6">
+                  <div className="text-center space-y-2">
+                    <p className="text-sm font-semibold text-foreground/60 uppercase">{plan.name}</p>
+                    <h3 className="text-2xl font-display">{plan.bottles}</h3>
+                    <p className="text-sm text-foreground/70">{plan.supply}</p>
+                  </div>
+
+                  <div className="text-center">
+                    <p className="text-4xl font-display text-primary">R$ {plan.price}</p>
+                  </div>
+
+                  {plan.bonuses > 0 && (
+                    <div className="bg-accent/10 rounded-lg p-3 text-center">
+                      <p className="text-sm font-semibold text-accent">{plan.bonuses} BÔNUS GRÁTIS!</p>
+                    </div>
+                  )}
+
+                  <div className="text-center text-sm text-foreground/70">
+                    <p>{plan.shipping}</p>
+                  </div>
+
+                  <Button
+                    asChild
+                    className={`w-full font-semibold ${
+                      plan.popular
+                        ? "bg-accent hover:bg-accent/90 text-white"
+                        : "bg-primary hover:bg-primary/90 text-white"
+                    }`}
+                  >
+                    <a href={AFFILIATE_LINK} target="_blank" rel="noopener noreferrer">
+                      Comprar Agora
+                    </a>
+                  </Button>
+                </div>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Bonuses Section */}
+      <section className="py-20 md:py-32">
+        <div className="container space-y-12">
+          <div className="text-center space-y-4 max-w-3xl mx-auto">
+            <h2 className="text-3xl md:text-4xl font-display">
+              Peça 6 ou 3 Frascos e Ganhe 2 BÔNUS GRÁTIS!
+            </h2>
+            <p className="text-lg text-foreground/70">
+              Bônus exclusivos para acelerar sua jornada de transformação.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-8">
+            <Card className="p-8 border-0 shadow-premium hover:shadow-hover transition-all">
+              <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+                <Zap className="w-6 h-6 text-primary" />
+              </div>
+              <h3 className="text-2xl font-display mb-2">BÔNUS #1</h3>
+              <p className="text-lg font-semibold text-accent mb-4">Detox de 1 Dia para Iniciar</p>
+              <p className="text-foreground/70 mb-4">100% GRÁTIS</p>
+              <p className="text-foreground/80">
+                Desintoxique, limpe e limpe seus órgãos para ajudar na absorção e iniciar sua jornada com Mitolyn com 20 estranhas receitas de chá detox de 15 segundos, usando ingredientes do dia a dia da sua cozinha.
+              </p>
+            </Card>
+
+            <Card className="p-8 border-0 shadow-premium hover:shadow-hover transition-all">
+              <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center mb-4">
+                <Leaf className="w-6 h-6 text-accent" />
+              </div>
+              <h3 className="text-2xl font-display mb-2">BÔNUS #2</h3>
+              <p className="text-lg font-semibold text-primary mb-4">Renove Você</p>
+              <p className="text-foreground/70 mb-4">100% GRÁTIS</p>
+              <p className="text-foreground/80">
+                Com seu novo corpo acelerado vem uma nova mentalidade. Descubra métodos simples que você pode fazer agora para aliviar instantaneamente o estresse e acalmar sua mente, aumentar a confiança e reduzir a ansiedade.
+              </p>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Guarantee Section */}
+      <section className="py-20 md:py-32 bg-gradient-to-r from-primary/5 to-accent/5">
+        <div className="container max-w-3xl mx-auto">
+          <Card className="p-12 border-0 shadow-premium text-center space-y-6">
+            <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto">
+              <Shield className="w-8 h-8 text-primary" />
+            </div>
+            <h2 className="text-3xl md:text-4xl font-display">
+              GARANTIA DE 100% DE SATISFAÇÃO COM DEVOLUÇÃO DO DINHEIRO EM 90 DIAS
+            </h2>
+            <p className="text-lg text-foreground/80 leading-relaxed">
+              Seu pedido de hoje é protegido por nossa garantia inquebrantável de 90 dias com 100% de devolução do dinheiro. Se você não ficar impressionado com a rapidez com que seus depósitos de gordura profundos derretem em pura energia, ou chocado ao admirar seu novo corpo tonificado e esbelto no espelho, então a qualquer momento nos próximos 90 dias nos avise e reembolsaremos cada centavo do seu investimento. Sem perguntas.
+            </p>
+            <p className="text-sm text-foreground/60">
+              Mitolyn é fabricado com orgulho nos EUA com os melhores ingredientes domésticos e estrangeiros.
+            </p>
+          </Card>
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section id="faq" className="py-20 md:py-32">
+        <div className="container max-w-3xl mx-auto space-y-12">
+          <div className="text-center space-y-4">
+            <h2 className="text-3xl md:text-4xl font-display">
+              Perguntas Frequentes
+            </h2>
+            <p className="text-lg text-foreground/70">
+              Encontre respostas para perguntas comuns sobre Mitolyn.
+            </p>
+          </div>
+
+          <Card className="border-0 shadow-premium overflow-hidden">
+            {FAQ_ITEMS.map((item, idx) => (
+              <FAQItem
+                key={idx}
+                question={item.question}
+                answer={item.answer}
+                isOpen={openFAQ === idx}
+                onToggle={() => setOpenFAQ(openFAQ === idx ? null : idx)}
+              />
+            ))}
+          </Card>
+        </div>
+      </section>
+
+      {/* Final CTA Section */}
+      <section className="py-20 md:py-32 bg-gradient-to-r from-primary via-primary/80 to-accent text-white">
+        <div className="container text-center space-y-8 max-w-3xl mx-auto">
+          <h2 className="text-3xl md:text-4xl font-display">
+            Pronto para Desbloquear Seu Poder Metabólico?
+          </h2>
+          <p className="text-lg text-white/90">
+            Junte-se a milhares de clientes satisfeitos que transformaram seus corpos e suas vidas com Mitolyn. Comece sua jornada hoje com nossa garantia de devolução do dinheiro em 90 dias.
+          </p>
+          <Button
+            asChild
+            size="lg"
+            className="bg-white text-primary hover:bg-white/90 font-semibold text-base"
+          >
+            <a href={AFFILIATE_LINK} target="_blank" rel="noopener noreferrer">
+              Comece Agora - Reclame Seu Desconto
+            </a>
+          </Button>
+          <p className="text-sm text-white/70">
+            ✓ Frete Grátis em Pedidos de 6 Frascos | ✓ Garantia de Devolução em 90 Dias | ✓ Fabricado nos EUA
+          </p>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="bg-foreground text-white py-12">
+        <div className="container">
+          <div className="grid md:grid-cols-4 gap-8 mb-8">
+            <div>
+              <p className="font-display text-lg mb-2">MITOLYN</p>
+              <p className="text-sm text-white/70">
+                Suplemento premium de apoio à perda de peso com ingredientes respaldados cientificamente.
+              </p>
+            </div>
+            <div>
+              <h4 className="font-semibold mb-4">Links Rápidos</h4>
+              <ul className="space-y-2 text-sm text-white/70">
+                <li><a href="#ingredients" className="hover:text-white transition-colors">Ingredientes</a></li>
+                <li><a href="#benefits" className="hover:text-white transition-colors">Benefícios</a></li>
+                <li><a href="#testimonials" className="hover:text-white transition-colors">Depoimentos</a></li>
+                <li><a href="#faq" className="hover:text-white transition-colors">FAQ</a></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-semibold mb-4">Legal</h4>
+              <ul className="space-y-2 text-sm text-white/70">
+                <li><a href="#" className="hover:text-white transition-colors">Termos de Serviço</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">Política de Privacidade</a></li>
+                <li><a href="#" className="hover:text-white transition-colors">Contato</a></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-semibold mb-4">Aviso Legal</h4>
+              <p className="text-xs text-white/60">
+                As afirmações encontradas neste site não foram avaliadas pela FDA. Os produtos não se destinam a diagnosticar, tratar, curar ou prevenir qualquer doença.
+              </p>
+            </div>
+          </div>
+
+          <div className="border-t border-white/10 pt-8 text-center text-sm text-white/70">
+            <p>© 2026 Mitolyn. Todos os direitos reservados. | Fabricado nos EUA</p>
+            <p className="mt-2 text-xs">
+              ClickBank® é uma marca registrada da Click Sales, Inc., uma corporação de Delaware localizada em 1444 S. Entertainment Ave., Suite 410 Boise, ID 83709, USA e usada com permissão.
+            </p>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
 }
-</style>
-</head>
-<body>
-
-<div class="topbar">📍 24 e 25 de Junho de 2026 · Expo Center Norte, São Paulo · Influent Summit 2026</div>
-
-<nav>
-  <div class="logo">
-    <div class="logo-badge">IS</div>
-    <div class="logo-text">Influent Summit<span>2026 · Creator Economy</span></div>
-  </div>
-  <a href="https://pay.kirvano.com/7475d1d7-e475-414e-a4f2-8c268ea08459?aff=da8460ed-a8ad-45d3-b256-ba8a8125134a" class="nav-btn" target="_blank">Garantir ingresso</a>
-</nav>
-
-<!-- HERO -->
-<section class="hero">
-  <div class="hero-grid"></div>
-  <div class="hero-glow"></div>
-  <div class="hero-line"></div>
-  <div class="date-badge r">24 e 25 de Junho · São Paulo · Expo Center Norte</div>
-  <h1 class="r">O Maior Evento de<br><span class="acc">Creator Economy</span><br>da América Latina</h1>
-  <p class="hero-sub r">O <strong>Influent Summit 2026</strong> reúne criadores de conteúdo, marcas, executivos, plataformas e líderes da indústria para discutir o presente e o futuro da influência digital.</p>
-  <div class="hero-info r">
-    <div class="hi-pill">📅 <strong>24 e 25 de Junho de 2026</strong></div>
-    <div class="hi-pill">📍 <strong>Expo Center Norte — São Paulo</strong></div>
-    <div class="hi-pill">🎤 <strong>Múltiplos palcos temáticos</strong></div>
-    <div class="hi-pill">🤝 <strong>Networking estratégico</strong></div>
-  </div>
-  <a href="https://pay.kirvano.com/7475d1d7-e475-414e-a4f2-8c268ea08459?aff=da8460ed-a8ad-45d3-b256-ba8a8125134a" class="btn-main r" target="_blank">GARANTIR MEU INGRESSO</a>
-  <div class="hero-trust r">
-    <span>🔒 Pagamento seguro via Kirvano</span>
-    <span>⚡ Confirmação imediata</span>
-    <span>🎟️ Ingressos limitados</span>
-  </div>
-</section>
-
-<!-- STATS -->
-<div class="stats">
-  <div class="stat r"><strong class="v">+8k</strong><p>Participantes esperados</p></div>
-  <div class="stat r"><strong class="c">4ª</strong><p>Edição do evento</p></div>
-  <div class="stat r"><strong class="v">6+</strong><p>Palcos temáticos</p></div>
-  <div class="stat r"><strong class="c">2</strong><p>Dias de conteúdo</p></div>
-</div>
-
-<!-- SOBRE -->
-<section class="sobre">
-  <div class="container">
-    <div class="sobre-grid">
-      <div class="sobre-text r">
-        <span class="sec-label">Sobre o evento</span>
-        <h2 class="sec-title" style="font-size:clamp(1.6rem,3.5vw,2.4rem)">Influência como <span class="a">Infraestrutura Social</span></h2>
-        <p>O Influent Summit é o maior evento de Creator Economy da América Latina. Criado com o objetivo de trazer educação, profissionalização e conexões estratégicas para todos os envolvidos no ecossistema digital — influenciadores, marcas, agências, plataformas e investidores.</p>
-        <p>Em 2026, o evento chega à sua <strong>4ª edição</strong> no Expo Center Norte, em São Paulo, com um programa expandido, novos palcos temáticos e a presença de líderes da indústria criativa nacional e internacional.</p>
-        <p>O Influent Summit reúne executivos e profissionais que participaram dos maiores eventos globais como <strong>SXSW, Web Summit, Cannes e VidCon</strong>, trazendo as discussões mais relevantes do mercado mundial para o Brasil.</p>
-      </div>
-      <div class="sobre-stats r">
-        <div class="ss"><div class="ss-num">+8k</div><div class="ss-label"><strong>Participantes esperados</strong>Entre criadores, marcas, agências e investidores</div></div>
-        <div class="ss"><div class="ss-num">+50</div><div class="ss-label"><strong>Especialistas e palestrantes</strong>Nomes relevantes do mercado digital brasileiro</div></div>
-        <div class="ss"><div class="ss-num">6+</div><div class="ss-label"><strong>Palcos temáticos</strong>Cada um com curadoria e público próprios</div></div>
-        <div class="ss"><div class="ss-num">2026</div><div class="ss-label"><strong>4ª edição do evento</strong>Com expansão internacional planejada</div></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- PALCOS -->
-<section class="palcos">
-  <div class="container">
-    <span class="sec-label r">Programação</span>
-    <h2 class="sec-title r">Os palcos do <span class="a">Influent Summit 2026</span></h2>
-    <p class="sec-sub r">Cada palco tem curadoria própria e é voltado a uma frente específica do ecossistema criativo.</p>
-    <div class="palcos-grid">
-      <div class="palco r"><div class="palco-icon">🎯</div><h3>Influência com Propósito</h3><p>O palco principal com 2.000 espectadores. Estratégias, histórias e ideias que movimentam os principais negócios do mercado digital.</p></div>
-      <div class="palco r"><div class="palco-icon">🤖</div><h3>IA, Plataformas e Tech</h3><p>IA generativa, automação, visão estratégica e o futuro da influência como motor de negócios. TikTok, YouTube, Kwai e Gemini presentes.</p></div>
-      <div class="palco r"><div class="palco-icon">🏭</div><h3>Industry</h3><p>Convergência entre Creator Economy e os grandes ecossistemas de mídia, produção e entretenimento.</p></div>
-      <div class="palco r"><div class="palco-icon">🌍</div><h3>Download</h3><p>Curadoria do que foi discutido nos maiores eventos globais — SXSW, Web Summit, Cannes e VidCon — trazido ao Brasil.</p></div>
-      <div class="palco r"><div class="palco-icon">🏘️</div><h3>Favela Inspira</h3><p>Espaço dedicado à voz e protagonismo das periferias brasileiras, liderado pelo movimento Digital Favela.</p></div>
-      <div class="palco r"><div class="palco-icon">💼</div><h3>Workshops e Networking</h3><p>Salas de workshop, atividades práticas e espaços estruturados para conexões estratégicas entre participantes.</p></div>
-    </div>
-  </div>
-</section>
-
-<!-- TÓPICOS -->
-<section class="topicos">
-  <div class="container">
-    <span class="sec-label r">Temas abordados</span>
-    <h2 class="sec-title r">O que será <span class="a">discutido</span></h2>
-    <p class="sec-sub r">Os temas mais relevantes do mercado de influência digital, debatidos por especialistas nacionais e internacionais.</p>
-    <div class="topics-grid r">
-      <div class="topic"><div class="dot"></div><p>Creator Economy como epicentro da nova publicidade global</p></div>
-      <div class="topic"><div class="dot"></div><p>IA generativa para criadores — conteúdo, voz, avatares e além</p></div>
-      <div class="topic"><div class="dot"></div><p>Marketing de influência: de visibilidade para impacto real</p></div>
-      <div class="topic"><div class="dot"></div><p>Como medir ROI real além das métricas de vaidade</p></div>
-      <div class="topic"><div class="dot"></div><p>A evolução dos creators para empreendedores de marca</p></div>
-      <div class="topic"><div class="dot"></div><p>Micro e nanoinfluenciadores no novo ecossistema de negócios</p></div>
-      <div class="topic"><div class="dot"></div><p>Brasil como 2º maior mercado de influenciadores no mundo</p></div>
-      <div class="topic"><div class="dot"></div><p>Plataformas emergentes e o que vem depois do TikTok</p></div>
-      <div class="topic"><div class="dot"></div><p>Como construir uma comunidade com propósito, não só audiência</p></div>
-      <div class="topic"><div class="dot"></div><p>Parcerias de longo prazo entre marcas e creators</p></div>
-      <div class="topic"><div class="dot"></div><p>Automação vs autenticidade: como usar IA com equilíbrio</p></div>
-      <div class="topic"><div class="dot"></div><p>Riscos regulatórios e diversificação de canais de distribuição</p></div>
-    </div>
-  </div>
-</section>
-
-<!-- QUEM PARTICIPA -->
-<section class="quem">
-  <div class="container">
-    <span class="sec-label r">Público do evento</span>
-    <h2 class="sec-title r">Quem participa do <span class="a">Influent Summit</span></h2>
-    <p class="sec-sub r">O evento reúne todos os perfis do ecossistema criativo digital em um único lugar.</p>
-    <div class="quem-grid">
-      <div class="qc r"><div class="qc-icon">📱</div><h3>Criadores e Influenciadores</h3><p>Do nano ao macro influenciador, todos os perfis de creators que atuam no mercado digital.</p></div>
-      <div class="qc r"><div class="qc-icon">🏢</div><h3>Marcas e Empresas</h3><p>Times de marketing e comunicação de marcas que investem ou planejam investir em marketing de influência.</p></div>
-      <div class="qc r"><div class="qc-icon">🎨</div><h3>Agências</h3><p>Agências de publicidade, marketing digital e gestão de talentos do mercado de influência.</p></div>
-      <div class="qc r"><div class="qc-icon">💻</div><h3>Plataformas e Startups</h3><p>Empresas de tecnologia, plataformas digitais e startups do ecossistema criativo.</p></div>
-      <div class="qc r"><div class="qc-icon">📊</div><h3>Executivos e C-levels</h3><p>Líderes e tomadores de decisão que precisam entender o papel da Creator Economy nos negócios.</p></div>
-      <div class="qc r"><div class="qc-icon">💡</div><h3>Profissionais do Setor</h3><p>Analistas, gestores, produtores e profissionais que trabalham ou querem atuar no mercado digital.</p></div>
-    </div>
-  </div>
-</section>
-
-<!-- INGRESSOS -->
-<section class="ingressos" id="ingressos">
-  <div class="container">
-    <span class="sec-label r" style="display:block;text-align:center">Ingresso</span>
-    <h2 class="sec-title r" style="text-align:center">Garanta seu <span class="a">ingresso</span></h2>
-    <p style="text-align:center;font-size:0.95rem;color:var(--muted);margin-bottom:52px" class="r">Influent Summit 2026 · 24 e 25 de Junho · Expo Center Norte, São Paulo</p>
-    <div style="display:flex;justify-content:center" class="r">
-      <div class="ing popular" style="max-width:480px;width:100%">
-        <div class="ing-tipo">Influent Summit 2026</div>
-        <div class="ing-nome">Ingresso Oficial</div>
-        <div class="ing-desc">24 e 25 de junho de 2026 · Expo Center Norte · São Paulo</div>
-        <div class="ing-features" style="margin-top:20px">
-          <div class="if"><span class="c">✓</span> Acesso aos 2 dias completos do evento</div>
-          <div class="if"><span class="c">✓</span> Todos os palcos temáticos</div>
-          <div class="if"><span class="c">✓</span> Feira de negócios e ativações de marcas</div>
-          <div class="if"><span class="c">✓</span> Networking com +8 mil participantes</div>
-          <div class="if"><span class="c">✓</span> Workshops e salas interativas</div>
-          <div class="if"><span class="c">✓</span> Maior evento de Creator Economy da América Latina</div>
-        </div>
-        <br>
-        <a href="https://pay.kirvano.com/7475d1d7-e475-414e-a4f2-8c268ea08459?aff=da8460ed-a8ad-45d3-b256-ba8a8125134a" class="ing-btn" target="_blank">GARANTIR MEU INGRESSO AGORA</a>
-        <p style="text-align:center;font-size:0.75rem;color:#2a2040;margin-top:12px">🔒 Pagamento seguro via Kirvano · Pix ou Cartão · Confirmação imediata</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- LOCAL -->
-<section class="local">
-  <div class="container" style="display:flex;justify-content:center">
-    <div class="local-box r">
-      <div class="local-map">
-        <div class="map-icon">📍</div>
-        <p><strong style="color:#ddd">Expo Center Norte</strong><br>Zona Norte de São Paulo<br>Rua José Bernardo Pinto, 333<br>Vila Guilherme — SP</p>
-      </div>
-      <div class="local-info">
-        <h3>Local do Evento</h3>
-        <div class="local-detail">
-          <div class="ld-icon">🏟️</div>
-          <div class="ld-text"><strong>Expo Center Norte</strong><p>Um dos maiores centros de eventos de São Paulo, na zona norte da capital paulista.</p></div>
-        </div>
-        <div class="local-detail">
-          <div class="ld-icon">📅</div>
-          <div class="ld-text"><strong>24 e 25 de junho de 2026</strong><p>Dois dias de programação intensa, das 9h às 21h.</p></div>
-        </div>
-        <div class="local-detail">
-          <div class="ld-icon">🎟️</div>
-          <div class="ld-text"><strong>Ingresso oficial disponível</strong><p>Acesso aos 2 dias completos do evento via Kirvano.</p></div>
-        </div>
-        <div class="local-detail">
-          <div class="ld-icon">🌎</div>
-          <div class="ld-text"><strong>Evento presencial</strong><p>Em São Paulo, com acesso a todos os palcos, feira e ativações.</p></div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- FAQ -->
-<section class="faq">
-  <div class="container">
-    <span class="sec-label r" style="text-align:center;display:block">Dúvidas</span>
-    <h2 class="sec-title r" style="text-align:center;max-width:100%">Perguntas <span class="a">frequentes</span></h2><br>
-    <div class="faq-list">
-      <div class="faq-item r"><button class="faq-q" onclick="toggle(this)"><span>Quando e onde é o Influent Summit 2026?</span><span class="faq-arrow">+</span></button><div class="faq-a"><p>O Influent Summit 2026 acontece nos dias 24 e 25 de junho de 2026, no Expo Center Norte, em São Paulo (Rua José Bernardo Pinto, 333 — Vila Guilherme).</p></div></div>
-      <div class="faq-item r"><button class="faq-q" onclick="toggle(this)"><span>Quais são os tipos de ingresso disponíveis?</span><span class="faq-arrow">+</span></button><div class="faq-a"><p>Há um ingresso oficial disponível para os 2 dias do Influent Summit 2026 — 24 e 25 de junho no Expo Center Norte. O ingresso dá acesso a todos os palcos, feira de negócios, workshops e ativações.</p></div></div>
-
-      
-      <div class="faq-item r"><button class="faq-q" onclick="toggle(this)"><span>Como recebo meu ingresso após a compra?</span><span class="faq-arrow">+</span></button><div class="faq-a"><p>Após a confirmação do pagamento, você receberá as instruções de acesso no e-mail cadastrado. O processamento é realizado pela plataforma Kirvano com segurança.</p></div></div>
-      <div class="faq-item r"><button class="faq-q" onclick="toggle(this)"><span>Quais formas de pagamento são aceitas?</span><span class="faq-arrow">+</span></button><div class="faq-a"><p>O pagamento é processado pela plataforma Kirvano e aceita Pix e Cartão de Crédito. A confirmação é imediata após o pagamento.</p></div></div>
-    </div>
-  </div>
-</section>
-
-<!-- FINAL -->
-<section class="final">
-  <h2 class="r">Faça parte do maior evento de<br><span class="a">Creator Economy</span> da América Latina</h2>
-  <p class="r">24 e 25 de junho de 2026 · Expo Center Norte · São Paulo. Garante seu ingresso agora.</p>
-  <a href="https://pay.kirvano.com/7475d1d7-e475-414e-a4f2-8c268ea08459?aff=da8460ed-a8ad-45d3-b256-ba8a8125134a" class="btn-main r" target="_blank">GARANTIR MEU INGRESSO AGORA</a>
-  <p style="margin-top:16px;font-size:0.77rem;color:#1a1530;position:relative" class="r">🔒 Pagamento seguro via Kirvano · Confirmação imediata · Expo Center Norte, SP</p>
-</section>
-
-<footer>
-  <p>Este site é independente e não possui vínculo oficial com os organizadores do evento.<br>
-  Ao clicar nos botões, você será redirecionado para a página oficial de ingressos na plataforma Kirvano.<br>
-  Informações sobre programação, palestrantes e preços estão sujeitas a alteração pelos organizadores.</p>
-  <p style="margin-top:10px">© 2026 Influent Summit 2026 — Todos os direitos reservados</p>
-</footer>
-
-<div class="sticky" id="sticky">
-  <p><strong>Influent Summit 2026</strong> — 24 e 25 de Junho · Expo Center Norte 🎤</p>
-  <a href="https://pay.kirvano.com/7475d1d7-e475-414e-a4f2-8c268ea08459?aff=da8460ed-a8ad-45d3-b256-ba8a8125134a" class="sticky-btn" target="_blank">GARANTIR INGRESSO</a>
-</div>
-
-<script>
-function toggle(btn){
-  const item=btn.closest('.faq-item');
-  document.querySelectorAll('.faq-item.open').forEach(el=>{if(el!==item)el.classList.remove('open')});
-  item.classList.toggle('open');
-}
-const obs=new IntersectionObserver((entries)=>{
-  entries.forEach((e,i)=>{
-    if(e.isIntersecting){setTimeout(()=>e.target.classList.add('on'),i*55);obs.unobserve(e.target)}
-  });
-},{threshold:0.08});
-document.querySelectorAll('.r').forEach(el=>obs.observe(el));
-window.addEventListener('scroll',()=>{
-  document.getElementById('sticky').classList.toggle('show',window.scrollY>500);
-});
-</script>
-</body>
-</html>
